@@ -1,8 +1,8 @@
 import { Component } from 'react';
 import styles from './ImageGallery.module.css';
 
-import { ImageGalleryItem } from '../index';
-import * as api from 'services/api';
+import { Button, ImageGalleryItem } from '../index';
+import { getImages } from 'services/api';
 
 export class ImageGallery extends Component {
   state = {
@@ -10,20 +10,36 @@ export class ImageGallery extends Component {
     page: 1,
   };
 
-  async componentDidMount() {
+  // obsługa update komponentu - nowe query i nowe page
+  async componentDidUpdate(prevProps, prevState) {
+    const { page } = this.state;
     const query = this.props.searchQuery;
-    this.fetchImages(query);
-  }
 
-  async componentDidUpdate(prevProps) {
     if (this.props.searchQuery !== prevProps.searchQuery) {
-      this.fetchImages(this.props.searchQuery);
+      this.fetchImages(query, 1);
+    }
+    if (this.state.page !== prevState.page) {
+      this.loadMoreImages(query, page);
     }
   }
 
-  async fetchImages(query) {
-    const response = await api.getImages(query);
-    this.setState({ images: response });
+  // pobieranie obrazków na nowe query
+  async fetchImages(query, page) {
+    const response = await getImages(query, page);
+    this.setState({ images: response, page: 1 });
+  }
+
+  // button handler - page + 1
+  handleLoadMore = () => {
+    this.setState(prevState => ({ page: prevState.page + 1 }));
+  };
+
+  // pobieranie obrazków na nowe page
+  async loadMoreImages(query, page) {
+    const moreImages = await getImages(query, page);
+    this.setState(prevState => ({
+      images: [...prevState.images, ...moreImages],
+    }));
   }
 
   render() {
@@ -40,6 +56,9 @@ export class ImageGallery extends Component {
             ></ImageGalleryItem>
           ))}
         </ul>
+        {images.length && (
+          <Button onClick={this.handleLoadMore}>Load more</Button>
+        )}
       </div>
     );
   }

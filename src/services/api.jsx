@@ -1,4 +1,3 @@
-// axios
 import axios from 'axios';
 axios.defaults.baseURL = 'https://pixabay.com/api/';
 
@@ -7,13 +6,12 @@ const searchParams = new URLSearchParams({
   image_type: 'photo',
   orientation: 'horizontal',
   safesearch: true,
-  page: 1,
   per_page: 12,
 });
 
-async function getImages(query) {
+export async function getImages(query, page) {
   try {
-    const url = `?${searchParams}&q=${encodeURIComponent(query)}`;
+    const url = `?${searchParams}&q=${encodeURIComponent(query)}&page=${page}`;
     const response = await axios.get(url);
 
     return response.data.hits;
@@ -22,5 +20,3 @@ async function getImages(query) {
     throw error;
   }
 }
-
-export { getImages, searchParams };

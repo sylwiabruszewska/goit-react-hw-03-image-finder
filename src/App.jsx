@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { Button, ImageGallery, Searchbar } from './components/index';
+import { ImageGallery, Searchbar } from './components/index';
 
 export class App extends Component {
   state = {
@@ -17,7 +17,6 @@ export class App extends Component {
       <div>
         <Searchbar onSubmit={this.handleSearch} />
         <ImageGallery searchQuery={searchQuery} />
-        <Button>Load more</Button>
       </div>
     );
   }
