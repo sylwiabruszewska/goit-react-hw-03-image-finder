@@ -8,6 +8,7 @@ export class ImageGallery extends Component {
   state = {
     images: [],
     page: 1,
+    totalPages: 0,
   };
 
   // obsługa update komponentu - nowe query i nowe page
@@ -26,7 +27,9 @@ export class ImageGallery extends Component {
   // pobieranie obrazków na nowe query
   async fetchImages(query, page) {
     const response = await getImages(query, page);
-    this.setState({ images: response, page: 1 });
+    const data = response.data.hits;
+    const totalPages = Math.floor(response.data.total / 12);
+    this.setState({ images: data, page: 1, totalPages: totalPages });
   }
 
   // button handler - page + 1
@@ -36,14 +39,15 @@ export class ImageGallery extends Component {
 
   // pobieranie obrazków na nowe page
   async loadMoreImages(query, page) {
-    const moreImages = await getImages(query, page);
+    const response = await getImages(query, page);
+    const data = response.data.hits;
     this.setState(prevState => ({
-      images: [...prevState.images, ...moreImages],
+      images: [...prevState.images, ...data],
     }));
   }
 
   render() {
-    const { images } = this.state;
+    const { images, page, totalPages } = this.state;
 
     return (
       <div>
@@ -56,7 +60,7 @@ export class ImageGallery extends Component {
             ></ImageGalleryItem>
           ))}
         </ul>
-        {images.length && (
+        {page < totalPages && (
           <Button onClick={this.handleLoadMore}>Load more</Button>
         )}
       </div>

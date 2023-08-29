@@ -14,7 +14,7 @@ export async function getImages(query, page) {
     const url = `?${searchParams}&q=${encodeURIComponent(query)}&page=${page}`;
     const response = await axios.get(url);
 
-    return response.data.hits;
+    return response;
   } catch (error) {
     console.error('An error occurred while fetching images:', error);
     throw error;
