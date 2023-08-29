@@ -1,0 +1,13 @@
+.box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.loader {
+  color: #3f51b5;
+  height: 100;
+  width: 100;
+  --oval-secondary-color: #5067ec;
+}

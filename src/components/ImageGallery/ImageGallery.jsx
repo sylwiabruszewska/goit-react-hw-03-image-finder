@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import styles from './ImageGallery.module.css';
 
-import { Button, ImageGalleryItem } from '../index';
+import { Button, ImageGalleryItem, Loader } from '../index';
 import { getImages } from 'services/api';
 
 export class ImageGallery extends Component {
@@ -9,6 +9,7 @@ export class ImageGallery extends Component {
     images: [],
     page: 1,
     totalPages: 0,
+    isLoading: false,
   };
 
   // obsługa update komponentu - nowe query i nowe page
@@ -26,10 +27,16 @@ export class ImageGallery extends Component {
 
   // pobieranie obrazków na nowe query
   async fetchImages(query, page) {
+    this.setState({ isLoading: true });
     const response = await getImages(query, page);
     const data = response.data.hits;
     const totalPages = Math.floor(response.data.total / 12);
-    this.setState({ images: data, page: 1, totalPages: totalPages });
+    this.setState({
+      images: data,
+      page: 1,
+      totalPages: totalPages,
+      isLoading: false,
+    });
   }
 
   // button handler - page + 1
@@ -39,15 +46,21 @@ export class ImageGallery extends Component {
 
   // pobieranie obrazków na nowe page
   async loadMoreImages(query, page) {
+    this.setState({ isLoading: true });
     const response = await getImages(query, page);
     const data = response.data.hits;
     this.setState(prevState => ({
       images: [...prevState.images, ...data],
+      isLoading: false,
     }));
   }
 
   render() {
-    const { images, page, totalPages } = this.state;
+    const { images, page, totalPages, isLoading } = this.state;
+
+    if (isLoading) {
+      return <Loader />;
+    }
 
     return (
       <div>
