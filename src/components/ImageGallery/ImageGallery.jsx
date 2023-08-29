@@ -11,7 +11,18 @@ export class ImageGallery extends Component {
   };
 
   async componentDidMount() {
-    const response = await api.getImages('grey cat');
+    const query = this.props.searchQuery;
+    this.fetchImages(query);
+  }
+
+  async componentDidUpdate(prevProps) {
+    if (this.props.searchQuery !== prevProps.searchQuery) {
+      this.fetchImages(this.props.searchQuery);
+    }
+  }
+
+  async fetchImages(query) {
+    const response = await api.getImages(query);
     this.setState({ images: response });
   }
 

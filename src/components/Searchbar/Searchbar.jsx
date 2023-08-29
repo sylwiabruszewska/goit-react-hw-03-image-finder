@@ -2,10 +2,14 @@ import styles from './Searchbar.module.css';
 
 import { SearchForm } from '../index';
 
-export const Searchbar = () => {
+export const Searchbar = ({ onSubmit }) => {
+  const handleSubmit = query => {
+    onSubmit(query);
+  };
+
   return (
     <header className={styles.searchbar}>
-      <SearchForm />
+      <SearchForm onSubmit={handleSubmit} />
     </header>
   );
 };
