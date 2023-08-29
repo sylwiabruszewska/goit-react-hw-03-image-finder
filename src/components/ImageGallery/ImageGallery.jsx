@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import styles from './ImageGallery.module.css';
 
-import { Button, ImageGalleryItem, Loader } from '../index';
+import { Button, ImageGalleryItem, Loader, Modal } from '../index';
 import { getImages } from 'services/api';
 
 export class ImageGallery extends Component {
@@ -10,6 +10,8 @@ export class ImageGallery extends Component {
     page: 1,
     totalPages: 0,
     isLoading: false,
+    selectedImage: null,
+    isModalOpen: false,
   };
 
   // obsługa update komponentu - nowe query i nowe page
@@ -55,8 +57,18 @@ export class ImageGallery extends Component {
     }));
   }
 
+  // otwieranie modala
+  openModal = image => {
+    this.setState({ selectedImage: image, isModalOpen: true });
+  };
+
+  // zamykanie modala
+  closeModal = () => {
+    this.setState({ selectedImage: null, isModalOpen: false });
+  };
+
   render() {
-    const { images, page, totalPages, isLoading } = this.state;
+    const { images, page, totalPages, isLoading, selectedImage } = this.state;
 
     if (isLoading) {
       return <Loader />;
@@ -73,8 +85,17 @@ export class ImageGallery extends Component {
             ></ImageGalleryItem>
           ))}
         </ul>
+
         {page < totalPages && (
           <Button onClick={this.handleLoadMore}>Load more</Button>
+        )}
+
+        {selectedImage && (
+          <Modal
+            largeImageURL={this.state.selectedImage.largeImageURL}
+            tags={this.state.selectedImage.tags}
+            onClick={this.closeModal}
+          />
         )}
       </div>
     );
