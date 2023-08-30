@@ -35,7 +35,9 @@ export class ImageGallery extends Component {
     const query = this.props.searchQuery;
 
     if (this.props.searchQuery !== prevProps.searchQuery) {
-      this.fetchImages(query, 1);
+      this.setState({ images: [], page: 1 }, () => {
+        this.fetchImages(query, 1);
+      });
     }
     if (this.state.page !== prevState.page) {
       this.loadMoreImages(query, page);
@@ -54,27 +56,38 @@ export class ImageGallery extends Component {
 
   // pobieranie obrazków na nowe query
   async fetchImages(query, page) {
-    this.setState({ isLoading: true });
-    const response = await getImages(query, page);
-    const data = response.data.hits;
-    const totalPages = Math.floor(response.data.total / 12);
-    this.setState({
-      images: data,
-      page: 1,
-      totalPages: totalPages,
-      isLoading: false,
-    });
+    this.setState({ isLoading: true, scrollPosition: 0 });
+    try {
+      const response = await getImages(query, page);
+      const data = response.data.hits;
+      const totalPages = Math.floor(response.data.total / 12);
+      this.setState({
+        images: data,
+        page: 1,
+        totalPages: totalPages,
+      });
+    } catch (error) {
+      this.setState({ error });
+    } finally {
+      this.setState({ isLoading: false });
+    }
   }
 
   // pobieranie obrazków na nowe page
   async loadMoreImages(query, page) {
     this.setState({ isLoading: true });
-    const response = await getImages(query, page);
-    const data = response.data.hits;
-    this.setState(prevState => ({
-      images: [...prevState.images, ...data],
-      isLoading: false,
-    }));
+
+    try {
+      const response = await getImages(query, page);
+      const data = response.data.hits;
+      this.setState(prevState => ({
+        images: [...prevState.images, ...data],
+      }));
+    } catch (error) {
+      this.setState({ error });
+    } finally {
+      this.setState({ isLoading: false });
+    }
   }
 
   // button handler - page + 1
