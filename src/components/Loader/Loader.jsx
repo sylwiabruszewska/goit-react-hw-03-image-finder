@@ -1,9 +1,11 @@
 import { Oval } from 'react-loader-spinner';
 import styles from './Loader.module.css';
 
+import { Container } from '../index';
+
 export const Loader = () => {
   return (
-    <div className={styles.box}>
+    <Container>
       <Oval
         className={styles.loader}
         ariaLabel="Loading indicator"
@@ -12,6 +14,6 @@ export const Loader = () => {
         color="#3f51b5"
         secondaryColor="#5067ec"
       />
-    </div>
+    </Container>
   );
 };
