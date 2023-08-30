@@ -21,25 +21,30 @@ export class ImageGallery extends Component {
     scrollPosition: 0,
   };
 
-  getSnapshotBeforeUpdate(_, prevState) {
-    if (prevState.images.length < this.state.images.length) {
-      const list = this.listRef.current;
-      const newScrollPosition = list.scrollHeight - list.scrollTop;
-      return newScrollPosition;
-    }
-    return null;
+  getSnapshotBeforeUpdate() {
+    const list = this.listRef.current;
+    const newScrollPosition = list.scrollHeight - list.scrollTop;
+    return newScrollPosition;
   }
 
   // obsługa update komponentu - nowe query i nowe page
-  async componentDidUpdate(prevProps, prevState, snapshot) {
-    const { page } = this.state;
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    const { page, images } = this.state;
+
+    if (images !== prevState.images && images.length !== 0) {
+      window.scrollTo({
+        top: this.state.scrollPosition,
+        behavior: 'smooth',
+      });
+    }
+
     const query = this.props.searchQuery;
 
     if (this.props.searchQuery !== prevProps.searchQuery) {
-      await this.fetchImages(query, 1);
+      this.fetchImages(query, 1);
     }
     if (this.state.page !== prevState.page) {
-      await this.loadMoreImages(query, page);
+      this.loadMoreImages(query, page);
 
       this.setState({
         scrollPosition: snapshot,
@@ -70,9 +75,6 @@ export class ImageGallery extends Component {
       images: [...prevState.images, ...data],
       isLoading: false,
     }));
-
-    const list = this.listRef.current;
-    list.scrollTo({ top: this.state.scrollPosition, behavior: 'smooth' });
   }
 
   // button handler - page + 1
