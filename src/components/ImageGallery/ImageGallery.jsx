@@ -71,10 +71,6 @@ export class ImageGallery extends Component {
   render() {
     const { images, page, totalPages, isLoading, selectedImage } = this.state;
 
-    if (isLoading) {
-      return <Loader />;
-    }
-
     return (
       <div>
         <ul className={styles.gallery}>
@@ -86,6 +82,8 @@ export class ImageGallery extends Component {
             ></ImageGalleryItem>
           ))}
         </ul>
+
+        {isLoading && <Loader />}
 
         {page < totalPages && (
           <Button onClick={this.handleLoadMore}>Load more</Button>
