@@ -21,6 +21,7 @@ export class ImageGallery extends Component {
     scrollPosition: 0,
   };
 
+  // pozycja scroll
   getSnapshotBeforeUpdate() {
     const list = this.listRef.current;
     const newScrollPosition = list.scrollHeight - list.scrollTop;
@@ -30,13 +31,6 @@ export class ImageGallery extends Component {
   // obsługa update komponentu - nowe query i nowe page
   componentDidUpdate(prevProps, prevState, snapshot) {
     const { page, images } = this.state;
-
-    if (images !== prevState.images && images.length !== 0) {
-      window.scrollTo({
-        top: this.state.scrollPosition,
-        behavior: 'smooth',
-      });
-    }
 
     const query = this.props.searchQuery;
 
@@ -48,6 +42,12 @@ export class ImageGallery extends Component {
 
       this.setState({
         scrollPosition: snapshot,
+      });
+    }
+    if (images !== prevState.images && images.length !== 0) {
+      window.scrollTo({
+        top: this.state.scrollPosition,
+        behavior: 'smooth',
       });
     }
   }
